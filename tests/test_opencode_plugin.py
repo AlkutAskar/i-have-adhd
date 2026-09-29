@@ -9,14 +9,19 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
+# The plugin default-exports one definition serving both APIs: V2 calls
+# `setup(ctx)` and V1 calls `server()`. Always-on injection is shared, so it is
+# asserted through both entry points.
+INJECTION_MODES = ["context", "v1-context"]
+
 
 @unittest.skipUnless(shutil.which("node"), "node is required for the OpenCode plugin")
 class OpenCodePluginTest(unittest.TestCase):
     """Mirror tests/test_always_on_hooks.py for the OpenCode server plugin: the
     always-on flag gates injection, and frontmatter stripping matches the hooks.
 
-    OpenCode V2 replaced the V1 `config` mutation hook with `ctx.skill.transform`
-    and `ctx.command.transform`, so registration is asserted through those."""
+    V2 registers through `ctx.skill.transform` and `ctx.command.transform`; V1
+    mutates the config object in its `config` hook. Both paths are covered."""
 
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
@@ -28,7 +33,7 @@ class OpenCodePluginTest(unittest.TestCase):
         self.config_dir = Path(self.temp_dir.name) / "config"
         (self.config_dir / "opencode").mkdir(parents=True)
 
-    def run_plugin(self, mode=None):
+    def run_plugin(self, mode=None, config=None):
         env = os.environ.copy()
         env["XDG_CONFIG_HOME"] = str(self.config_dir)
         args = [
@@ -38,6 +43,8 @@ class OpenCodePluginTest(unittest.TestCase):
         ]
         if mode:
             args.append(mode)
+        if config is not None:
+            args.append(json.dumps(config))
         return subprocess.run(
             args,
             check=False,
@@ -52,25 +59,50 @@ class OpenCodePluginTest(unittest.TestCase):
     def write_skill(self, text):
         (self.plugin_root / "skills" / "i-have-adhd" / "SKILL.md").write_text(text)
 
+    # --- always-on injection, asserted through both APIs ---
+
     def test_silent_without_opt_in_flag(self):
-        result = self.run_plugin()
-        self.assertEqual(0, result.returncode, result.stderr)
-        self.assertEqual("", result.stdout)
+        for mode in INJECTION_MODES:
+            with self.subTest(mode=mode):
+                result = self.run_plugin(mode)
+                self.assertEqual(0, result.returncode, result.stderr)
+                self.assertEqual("", result.stdout)
+
+    def test_injects_ruleset_when_opted_in(self):
+        self.opt_in()
+        for mode in INJECTION_MODES:
+            with self.subTest(mode=mode):
+                result = self.run_plugin(mode)
+                self.assertEqual(0, result.returncode, result.stderr)
+                self.assertIn("ADHD MODE ACTIVE (always-on)", result.stdout)
+                self.assertIn("Working memory is small", result.stdout)
 
     def test_strips_frontmatter_with_trailing_whitespace(self):
         self.write_skill("---   \nname: fixture\n--- \t\nFixture body.\n")
         self.opt_in()
-        result = self.run_plugin()
-        self.assertEqual(0, result.returncode, result.stderr)
-        self.assertNotIn("name: fixture", result.stdout)
-        self.assertIn("\n\nFixture body.", result.stdout)
+        for mode in INJECTION_MODES:
+            with self.subTest(mode=mode):
+                result = self.run_plugin(mode)
+                self.assertEqual(0, result.returncode, result.stderr)
+                self.assertNotIn("name: fixture", result.stdout)
+                self.assertIn("\n\nFixture body.", result.stdout)
 
     def test_keeps_content_when_frontmatter_is_unclosed(self):
         self.write_skill("---\nname: fixture\nFixture body, fence never closed.\n")
         self.opt_in()
-        result = self.run_plugin()
-        self.assertEqual(0, result.returncode, result.stderr)
-        self.assertIn("Fixture body, fence never closed.", result.stdout)
+        for mode in INJECTION_MODES:
+            with self.subTest(mode=mode):
+                result = self.run_plugin(mode)
+                self.assertEqual(0, result.returncode, result.stderr)
+                self.assertIn("Fixture body, fence never closed.", result.stdout)
+
+    def test_both_apis_share_the_same_injected_text(self):
+        self.opt_in()
+        v2 = self.run_plugin("context").stdout
+        v1 = self.run_plugin("v1-context").stdout
+        self.assertEqual(v2, v1)
+
+    # --- V2 registration ---
 
     def test_setup_registers_the_slash_command(self):
         # Regression test for #140: a global install (plugin loaded from a
@@ -115,6 +147,65 @@ class OpenCodePluginTest(unittest.TestCase):
                 result = self.run_plugin(mode="skill")
                 self.assertEqual(0, result.returncode, result.stderr)
                 self.assertEqual("i-have-adhd", json.loads(result.stdout)[0]["id"])
+
+    # --- V1 config registration ---
+
+    def test_v1_config_hook_registers_the_slash_command(self):
+        result = self.run_plugin(mode="v1-config")
+        self.assertEqual(0, result.returncode, result.stderr)
+        config = json.loads(result.stdout)
+        command = config["command"]["i-have-adhd"]
+        self.assertIn("ADHD", command["description"])
+        self.assertIn("stop adhd mode", command["template"])
+
+    def test_v1_config_hook_registers_the_skills_path(self):
+        result = self.run_plugin(mode="v1-config")
+        self.assertEqual(0, result.returncode, result.stderr)
+        config = json.loads(result.stdout)
+        self.assertIn(str(self.plugin_root / "skills"), config["skills"]["paths"])
+
+    def test_v1_config_preserves_existing_command(self):
+        custom = {"description": "User command", "template": "Keep this", "agent": "plan"}
+        result = self.run_plugin("v1-config", {"command": {"i-have-adhd": custom}})
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual(custom, json.loads(result.stdout)["command"]["i-have-adhd"])
+
+    def test_v1_repeated_config_does_not_duplicate_skill_paths(self):
+        result = self.run_plugin("v1-config")
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual(
+            [str(self.plugin_root / "skills")], json.loads(result.stdout)["skills"]["paths"]
+        )
+
+    def test_v1_command_preserves_metadata_and_trims_template(self):
+        metadata = {"description": 'ADHD: "focus"\nnext line', "agent": "plan",
+                    "model": "fixture/model", "subagent": True}
+        command = self.plugin_root / ".opencode/command/i-have-adhd.md"
+        command.write_bytes(("---  \r\n" + json.dumps(metadata) +
+                             "\r\n--- \t\r\n\r\nUse the skill.\r\n\r\n").encode())
+        result = self.run_plugin("v1-config")
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual({**metadata, "template": "Use the skill."},
+                         json.loads(result.stdout)["command"]["i-have-adhd"])
+
+    def test_v1_missing_command_keeps_skill_discovery(self):
+        (self.plugin_root / ".opencode/command/i-have-adhd.md").unlink()
+        result = self.run_plugin("v1-config")
+        self.assertEqual(0, result.returncode, result.stderr)
+        config = json.loads(result.stdout)
+        self.assertNotIn("i-have-adhd", config["command"])
+        self.assertEqual([str(self.plugin_root / "skills")], config["skills"]["paths"])
+
+    def test_v1_malformed_command_does_not_leak_frontmatter_into_prompt(self):
+        command = self.plugin_root / ".opencode/command/i-have-adhd.md"
+        for text in ["---\n{broken}\n---\nBody", '---\n{"description":"unclosed"}\nBody']:
+            with self.subTest(text=text):
+                command.write_text(text)
+                result = self.run_plugin("v1-config")
+                self.assertEqual(0, result.returncode, result.stderr)
+                config = json.loads(result.stdout)
+                self.assertNotIn("i-have-adhd", config["command"])
+                self.assertEqual([str(self.plugin_root / "skills")], config["skills"]["paths"])
 
 
 if __name__ == "__main__":

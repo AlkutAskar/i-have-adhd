@@ -514,6 +514,11 @@ OpenCode reads `skills/i-have-adhd/SKILL.md` natively, so the ruleset is availab
 to the `skill` tool with no plugin at all. The plugin adds two things on top: the
 `/i-have-adhd` slash command for a global install, and the always-on flag.
 
+The plugin serves both OpenCode plugin APIs from one default export. OpenCode V2
+calls `setup(ctx)`; OpenCode V1 calls `server()`. V1 object entrypoints require
+OpenCode 1.18.29 or newer — on 1.18.28 and older, stay on the plugin file from the
+previous release, which exports a bare plugin function.
+
 ## Install
 
 ### Skill only (no plugin)
