@@ -548,8 +548,21 @@ This is the recommended global install: two files, no plugin, no build step.
 ### Plugin (adds always-on)
 
 The plugin registers the skill and the command itself and adds the always-on
-flag. OpenCode V2 loads a plugin that sits in a discovered `.opencode/plugins/`
-directory, so expose the vendored checkout with a one-line loader:
+flag.
+
+**Running from a checkout needs no configuration on OpenCode V2.** V2 auto-discovers
+direct `.ts` and `.js` files in a discovered `.opencode/plugins/` directory, and this
+repository ships `.opencode/plugins/i-have-adhd.js` as a mirror of the implementation.
+Open a terminal in the checkout and start OpenCode.
+
+OpenCode V1 does not auto-discover `.opencode/plugins/`, so add the plugin explicitly:
+
+```jsonc
+{ "plugin": ["/absolute/path/to/i-have-adhd/.opencode/plugins/i-have-adhd.mjs"] }
+```
+
+**For a global install, expose the vendored checkout with a one-line loader**, because
+the checkout is not a discovered project:
 
 ```bash
 git clone https://github.com/ayghri/i-have-adhd ~/.config/opencode/vendor/i-have-adhd
@@ -561,17 +574,17 @@ EOF
 
 The loader re-exports the vendored module so its `__dirname` — and therefore its
 `../../skills` and `../command/i-have-adhd.md` lookups — stay inside the checkout.
-Replace `file://$HOME/...` with an absolute `file:///` URL; a loader is used
-because OpenCode 2.0.18 rejects file paths in `plugins`
-(`configured plugin path must be a directory`) and ignores configured directory
-paths.
+Replace `file://$HOME/...` with an absolute `file:///` URL.
 
-To run OpenCode from a checkout instead, use the root `opencode.json`, which wires
-the plugin for that directory.
+A `plugins` config entry is not usable for either case on 2.0.18: a file path is
+rejected with `configured plugin path must be a directory`, and a directory path is
+accepted but never loaded. Auto-discovery is the supported route.
 
 ## Verify
 
 Start OpenCode, type `/`, and confirm `i-have-adhd` appears in the command list.
+From a checkout on V1, `opencode debug config` should show `command["i-have-adhd"]`
+and the checkout's `skills` directory under `skills.paths`.
 
 ## Update
 

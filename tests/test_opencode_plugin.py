@@ -208,5 +208,40 @@ class OpenCodePluginTest(unittest.TestCase):
                 self.assertEqual([str(self.plugin_root / "skills")], config["skills"]["paths"])
 
 
+    # --- V2 auto-discovery mirror ---
+
+    def test_js_mirror_reexports_the_implementation(self):
+        # OpenCode V2 auto-discovers direct .ts/.js files in a discovered
+        # .opencode/plugins/ directory but not .mjs, and a `plugins` config entry
+        # is unusable on 2.0.18 (file paths rejected, directory paths ignored).
+        # The .js mirror is what makes a local checkout load on V2, so assert it
+        # exists and resolves to the same definition as the .mjs.
+        mirror = ROOT / ".opencode" / "plugins" / "i-have-adhd.js"
+        impl = ROOT / ".opencode" / "plugins" / "i-have-adhd.mjs"
+        self.assertTrue(mirror.is_file(), "missing V2 auto-discovery mirror")
+        self.assertTrue(impl.is_file())
+
+        env = os.environ.copy()
+        env["XDG_CONFIG_HOME"] = str(self.config_dir)
+        script = (
+            "const a = (await import(process.argv[1])).default;"
+            "const b = (await import(process.argv[2])).default;"
+            "process.stdout.write(JSON.stringify({"
+            "same: a === b || (a.id === b.id && typeof a.setup === 'function'"
+            "  && typeof b.setup === 'function' && typeof a.server === 'function'"
+            "  && typeof b.server === 'function'),"
+            "id: a.id, keys: Object.keys(a).sort()}));"
+        )
+        result = subprocess.run(
+            ["node", "--input-type=module", "-e", script, mirror.as_uri(), impl.as_uri()],
+            check=False, capture_output=True, text=True, env=env,
+        )
+        self.assertEqual(0, result.returncode, result.stderr)
+        mirror_export = json.loads(result.stdout)
+        self.assertTrue(mirror_export["same"], "mirror does not re-export the implementation")
+        self.assertEqual("i-have-adhd", mirror_export["id"])
+        self.assertEqual(["id", "server", "setup"], mirror_export["keys"])
+
+
 if __name__ == "__main__":
     unittest.main()

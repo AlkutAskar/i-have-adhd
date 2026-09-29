@@ -48,7 +48,7 @@ When debugging or changing one integration, begin with its entry point:
 | Grok | `plugin.json`, `skills/i-have-adhd/SKILL.md`, `INSTALL.md` |
 | Pi | `package.json` (`pi`), `extensions/i-have-adhd.ts` |
 | OMP | `package.json` (`omp`), `extensions/i-have-adhd.ts`, `extensions/context-compat.ts` |
-| OpenCode | `opencode.json`, `.opencode/plugins/i-have-adhd.mjs`, `.opencode/command/i-have-adhd.md` |
+| OpenCode | `.opencode/plugins/i-have-adhd.mjs`, `.opencode/plugins/i-have-adhd.js`, `.opencode/command/i-have-adhd.md` |
 | Qwen, Kimi, Gemini | The corresponding manifest above, plus `GEMINI.md` for Gemini behavior |
 
 ## Source-of-truth rules
