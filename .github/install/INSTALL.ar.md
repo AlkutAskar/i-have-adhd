@@ -504,35 +504,39 @@ hermes skills uninstall i-have-adhd
 <details>
 <summary><strong>OpenCode</strong></summary>
 
-يقوم OpenCode بتحميل هذا المستودع كمكون إضافي للخادم: يسجل `.opencode/plugins/i-have-adhd.mjs` نقطة إدخال `skills/` والأمر `/i-have-adhd`، ويضيف مجموعة القواعد عند تمكين التشغيل الدائم. يقرأ OpenCode أيضًا `skills/` محليًا، لذلك تظل المهارة تعمل حتى بدون المكوّن الإضافي - يضيف المكوّن الإضافي أمر `/i-have-adhd` وعلامة التشغيل الدائم.
+يدعم المكوّن الإضافي OpenCode V1 **1.18.29 وما بعده** وV2. يسجّل المهارة والأمر `/i-have-adhd` ويتيح وضع التشغيل الدائم اختياريًا. تحتاج إصدارات V1 الأقدم إلى التحديث أو استخدام المكوّن الإضافي من الإصدار السابق للمهارة.
 
 ### تثبيت
 
-استنسخ المستودع ووجّه OpenCode إلى المكوّن الإضافي. يتيح المسار المطلق استخدام نسخة محلية واحدة في جميع المشاريع:
+للاستخدام في جميع المشاريع:
 
 ```bash
 git clone https://github.com/ayghri/i-have-adhd ~/.config/opencode/vendor/i-have-adhd
+mkdir -p ~/.config/opencode/plugins
+cat > ~/.config/opencode/plugins/i-have-adhd.js <<'EOF'
+export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs';
+EOF
 ```
 
-أضف إلى `opencode.json` (العالمي: `~/.config/opencode/opencode.json`):
+يعمل الاستيراد النسبي كما هو، دون استبدال المسارات. يكتشف V1 وV2 مكوّنات `.js` الإضافية تلقائيًا. شغّل OpenCode من مجلد المستودع؛ يحمّل `.opencode/plugins/i-have-adhd.js` المكوّن الإضافي دون الحاجة إلى `opencode.json`.
 
-```json
-{ "plugin": ["/absolute/path/to/i-have-adhd/.opencode/plugins/i-have-adhd.mjs"] }
+تظل إعدادات V1 الحالية التي تشير إلى ملف `.mjs` عبر `plugin` في `opencode.json` تعمل على 1.18.29 وما بعده. استخدم ذلك الإعداد أو ملف التحميل أعلاه، وليس كليهما، لتجنب التحميل المكرر.
+
+ابدأ جلسة جديدة واكتب `/i-have-adhd`. تظل القواعد سارية حتى تقول `stop adhd mode` أو `normal mode`.
+
+#### المهارة والأمر فقط (دون تشغيل دائم)
+
+بدلًا من ذلك، انسخ المهارة والأمر من المستودع إلى مجلدات OpenCode العامة:
+
+```bash
+mkdir -p ~/.config/opencode/skills/i-have-adhd ~/.config/opencode/commands
+cp skills/i-have-adhd/SKILL.md ~/.config/opencode/skills/i-have-adhd/SKILL.md
+cp .opencode/command/i-have-adhd.md ~/.config/opencode/commands/i-have-adhd.md
 ```
-
-أو شغّل OpenCode من نسخة المستودع المحلية؛ إذ يحتوي ملف `opencode.json` في الجذر على إعداد المكوّن الإضافي مسبقًا.
-
-ابدأ جلسة جديدة وفعّل نمط الإجابات المناسبة لاضطراب فرط الحركة وتشتت الانتباه:
-
-```text
-/i-have-adhd
-```
-
-تظل القواعد سارية حتى `stop adhd mode` أو `normal mode`.
 
 ### تحقق
 
-ابدأ تشغيل OpenCode، واكتب `/`، وتأكد من ظهور `i-have-adhd` في قائمة الأوامر.
+شغّل OpenCode، واكتب `/`، وتأكد من ظهور `i-have-adhd` في قائمة الأوامر.
 
 ### تحديث
 
@@ -540,21 +544,27 @@ git clone https://github.com/ayghri/i-have-adhd ~/.config/opencode/vendor/i-have
 git -C ~/.config/opencode/vendor/i-have-adhd pull
 ```
 
+إذا استخدمت التثبيت بالنسخ، حدّث نسختك المحلية ثم انسخ الملفين مجددًا.
+
 ### إلغاء التثبيت
 
-قم بإزالة إدخال `plugin` من `opencode.json`.
+احذف `~/.config/opencode/plugins/i-have-adhd.js`. للتثبيت بالنسخ، احذف `~/.config/opencode/skills/i-have-adhd/` و`~/.config/opencode/commands/i-have-adhd.md`. لإعداد V1 الحالي، أزل إدخال `plugin` الخاص به.
 
-### تشغيل دائمًا (اختياري)
+### تشغيل دائم (اختياري)
+
+يتطلب المكوّن الإضافي. يضيف إنشاء ملف العلامة مجموعة القواعد الكاملة إلى موجّه النظام في كل رد:
 
 ```bash
 touch ~/.config/opencode/.i-have-adhd-always
 ```
 
-أثناء وجود العلامة، يضيف المكوّن الإضافي مجموعة القواعد الكاملة إلى موجّه النظام في كل رد - وهو نظير خطاف `SessionStart` الخاص بـ Claude Code في OpenCode. يقوم `stop adhd mode` أو `normal mode` بتعطيله للجلسة الحالية؛ احذف العلامة لتعطيل التشغيل الدائم:
+يطلب `stop adhd mode` أو `normal mode` من الوكيل العودة إلى نمط الرد المعتاد في الجلسة الحالية. احذف العلامة لإيقاف إضافة القواعد تلقائيًا:
 
 ```bash
 rm ~/.config/opencode/.i-have-adhd-always
 ```
+
+إذا كان `XDG_CONFIG_HOME` محددًا، فاستبدل `~/.config` في هذه المسارات بذلك المجلد.
 
 </details>
 

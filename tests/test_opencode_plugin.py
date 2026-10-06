@@ -9,9 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-# The plugin default-exports one definition serving both APIs: V2 calls
-# `setup(ctx)` and V1 calls `server()`. Always-on injection is shared, so it is
-# asserted through both entry points.
+# Exercise both runtime APIs against the same fixtures.
 INJECTION_MODES = ["context", "v1-context"]
 
 
@@ -26,7 +24,7 @@ class OpenCodePluginTest(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp_dir.cleanup)
-        self.plugin_root = Path(self.temp_dir.name) / "plugin"
+        self.plugin_root = Path(self.temp_dir.name).resolve() / "plugin"
         shutil.copytree(ROOT / ".opencode", self.plugin_root / ".opencode")
         shutil.copytree(ROOT / "skills", self.plugin_root / "skills")
         # The plugin reads its flag from $XDG_CONFIG_HOME/opencode/.i-have-adhd-always.
@@ -208,14 +206,8 @@ class OpenCodePluginTest(unittest.TestCase):
                 self.assertEqual([str(self.plugin_root / "skills")], config["skills"]["paths"])
 
 
-    # --- V2 auto-discovery mirror ---
-
     def test_js_mirror_reexports_the_implementation(self):
-        # OpenCode V2 auto-discovers direct .ts/.js files in a discovered
-        # .opencode/plugins/ directory but not .mjs, and a `plugins` config entry
-        # is unusable on 2.0.18 (file paths rejected, directory paths ignored).
-        # The .js mirror is what makes a local checkout load on V2, so assert it
-        # exists and resolves to the same definition as the .mjs.
+        # Discovery uses .js; re-exporting must preserve the module identity.
         mirror = ROOT / ".opencode" / "plugins" / "i-have-adhd.js"
         impl = ROOT / ".opencode" / "plugins" / "i-have-adhd.mjs"
         self.assertTrue(mirror.is_file(), "missing V2 auto-discovery mirror")
@@ -227,9 +219,7 @@ class OpenCodePluginTest(unittest.TestCase):
             "const a = (await import(process.argv[1])).default;"
             "const b = (await import(process.argv[2])).default;"
             "process.stdout.write(JSON.stringify({"
-            "same: a === b || (a.id === b.id && typeof a.setup === 'function'"
-            "  && typeof b.setup === 'function' && typeof a.server === 'function'"
-            "  && typeof b.server === 'function'),"
+            "same: a === b,"
             "id: a.id, keys: Object.keys(a).sort()}));"
         )
         result = subprocess.run(

@@ -32,6 +32,8 @@ Install the i-have-adhd skill/plugin from https://github.com/ayghri/i-have-adhd,
 
 Or 🔗 [check the installation instructions](INSTALL.md).
 
+The OpenCode plugin supports V1 1.18.29+ and V2.
+
 ## What it does
 
 A skill for your coding assistant that stops it from burying the answer. Action first. Steps numbered. No "Hope this helps!"

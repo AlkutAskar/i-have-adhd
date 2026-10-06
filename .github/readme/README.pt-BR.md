@@ -26,6 +26,8 @@
 
 🔗 [Instruções de instalação](../install/INSTALL.pt-BR.md)
 
+O plugin OpenCode suporta V1 1.18.29 ou superior e V2.
+
 ## O que ela faz
 
 Uma skill para o seu assistente de código que impede que ele enterre a resposta. Ação primeiro. Passos numerados. Nada de "Espero ter ajudado!"

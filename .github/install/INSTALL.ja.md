@@ -384,35 +384,39 @@ Kimi Code セッション内で `/plugins` を実行し、**I Have ADHD** にカ
 <details>
 <summary><strong>OpenCode</strong></summary>
 
-OpenCode はこのリポジトリをサーバープラグインとして読み込みます。`.opencode/plugins/i-have-adhd.mjs` が `skills/` のエントリーポイントと `/i-have-adhd` コマンドを登録し、常時有効化されている場合はルールセットを注入します。また、OpenCode は `skills/` をネイティブにも読み込めるため、プラグインなしでもスキル自体は動作します（プラグインを追加すると `/i-have-adhd` コマンドと常時有効化フラグが使えるようになります）。
+プラグインは OpenCode V1 **1.18.29以降**と V2 に対応しています。スキルと `/i-have-adhd` コマンドを登録し、任意の常時有効モードを提供します。古い V1 はアップグレードするか、以前のスキルリリースのプラグインを使用してください。
 
 ### インストール
 
-リポジトリをクローンし、OpenCode からプラグインを指定します。絶対パスを指定すると、すべてのプロジェクトで単一のチェックアウトを共有できます：
+すべてのプロジェクトで使用する場合：
 
 ```bash
 git clone https://github.com/ayghri/i-have-adhd ~/.config/opencode/vendor/i-have-adhd
+mkdir -p ~/.config/opencode/plugins
+cat > ~/.config/opencode/plugins/i-have-adhd.js <<'EOF'
+export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs';
+EOF
 ```
 
-`opencode.json`（グローバル設定: `~/.config/opencode/opencode.json`）に追加：
+相対インポートはそのまま使えます。パスの置き換えは不要です。V1 と V2 は `.js` プラグインを自動検出します。チェックアウト先で OpenCode を起動すれば、`.opencode/plugins/i-have-adhd.js` が読み込まれるため、`opencode.json` は不要です。
 
-```json
-{ "plugin": ["/absolute/path/to/i-have-adhd/.opencode/plugins/i-have-adhd.mjs"] }
+既存の V1 設定で `opencode.json` の `plugin` から `.mjs` ファイルを指定している場合も、1.18.29以降では動作します。二重読み込みを避けるため、その設定か上記のローダーのどちらか一方を使用してください。
+
+新しいセッションで `/i-have-adhd` と入力します。`stop adhd mode` または `normal mode` と入力するまでルールが維持されます。
+
+#### スキルとコマンドのみ（常時有効なし）
+
+別の方法として、チェックアウト先からスキルとコマンドをグローバルディレクトリにコピーできます：
+
+```bash
+mkdir -p ~/.config/opencode/skills/i-have-adhd ~/.config/opencode/commands
+cp skills/i-have-adhd/SKILL.md ~/.config/opencode/skills/i-have-adhd/SKILL.md
+cp .opencode/command/i-have-adhd.md ~/.config/opencode/commands/i-have-adhd.md
 ```
-
-または、チェックアウト先から直接 OpenCode を起動します。ルート直下の `opencode.json` にプラグインが設定済みです。
-
-新しいセッションを開始し、そのセッションでADHDフレンドリーな出力を有効化：
-
-```text
-/i-have-adhd
-```
-
-`stop adhd mode` または `normal mode` と入力するまでルールが維持されます。
 
 ### 確認
 
-OpenCode を起動して `/` と入力し、コマンド一覧に `i-have-adhd` が表示されることを確認します。
+OpenCode を起動し、`/` と入力して、コマンド一覧に `i-have-adhd` があることを確認します。
 
 ### 更新
 
@@ -420,21 +424,27 @@ OpenCode を起動して `/` と入力し、コマンド一覧に `i-have-adhd` 
 git -C ~/.config/opencode/vendor/i-have-adhd pull
 ```
 
+コピー方式では、チェックアウトを更新した後に2つのファイルを再度コピーしてください。
+
 ### アンインストール
 
-`opencode.json` から `plugin` のエントリーを削除します。
+`~/.config/opencode/plugins/i-have-adhd.js` を削除します。コピー方式では `~/.config/opencode/skills/i-have-adhd/` と `~/.config/opencode/commands/i-have-adhd.md` を削除します。既存の V1 設定方式では、該当する `plugin` エントリーを削除します。
 
 ### 常時有効（任意）
+
+プラグインが必要です。フラグを作成すると、毎ターン完全なルールセットがシステムプロンプトに追加されます：
 
 ```bash
 touch ~/.config/opencode/.i-have-adhd-always
 ```
 
-フラグファイルが存在する間、プラグインは毎ターンシステムプロンプトの末尾に完全なルールセットを追加します（Claude Code の `SessionStart` フックに相当）。`stop adhd mode` や `normal mode` で現在のセッションのみ無効化できます。常時有効を完全に解除する場合はフラグファイルを削除してください：
+`stop adhd mode` または `normal mode` は、現在のセッションで通常の出力に戻るようエージェントに指示します。自動注入を停止するにはフラグを削除してください：
 
 ```bash
 rm ~/.config/opencode/.i-have-adhd-always
 ```
+
+`XDG_CONFIG_HOME` を設定している場合は、これらのパスの `~/.config` をそのディレクトリに置き換えてください。
 
 </details>
 

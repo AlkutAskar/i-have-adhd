@@ -508,117 +508,71 @@ Use slash command `/skill:i-have-adhd` to invoke the skill explicitly.
 <details>
 <summary><strong>OpenCode</strong></summary>
 
-# OpenCode
+The plugin supports OpenCode V1 **1.18.29+** and V2. It registers the skill and `/i-have-adhd` command, and adds optional always-on mode. Older V1 versions need an upgrade or the plugin from the previous skill release.
 
-OpenCode reads `skills/i-have-adhd/SKILL.md` natively, so the ruleset is available
-to the `skill` tool with no plugin at all. The plugin adds two things on top: the
-`/i-have-adhd` slash command for a global install, and the always-on flag.
+### Install
 
-The plugin serves both OpenCode plugin APIs from one default export. OpenCode V2
-calls `setup(ctx)`; OpenCode V1 calls `server()`. V1 object entrypoints require
-OpenCode 1.18.29 or newer — on 1.18.28 and older, stay on the plugin file from the
-previous release, which exports a bare plugin function.
-
-## Install
-
-### Skill only (no plugin)
-
-Copy the skill into your global skills directory. OpenCode discovers
-`~/.config/opencode/skills/` and every project already gets the ruleset through the
-`skill` tool. Ask for it in plain words ("use the i-have-adhd skill").
-
-```bash
-mkdir -p ~/.config/opencode/skills/i-have-adhd
-cp skills/i-have-adhd/SKILL.md ~/.config/opencode/skills/i-have-adhd/SKILL.md
-```
-
-### Skill and `/i-have-adhd` command (no plugin)
-
-Also copy the command file. A global install has no project-scope
-`.opencode/commands/` directory, so `/i-have-adhd` is otherwise missing from the
-`/` menu (see #140).
-
-```bash
-mkdir -p ~/.config/opencode/commands
-cp .opencode/command/i-have-adhd.md ~/.config/opencode/commands/i-have-adhd.md
-```
-
-This is the recommended global install: two files, no plugin, no build step.
-
-### Plugin (adds always-on)
-
-The plugin registers the skill and the command itself and adds the always-on
-flag.
-
-**Running from a checkout needs no configuration on OpenCode V2.** V2 auto-discovers
-direct `.ts` and `.js` files in a discovered `.opencode/plugins/` directory, and this
-repository ships `.opencode/plugins/i-have-adhd.js` as a mirror of the implementation.
-Open a terminal in the checkout and start OpenCode.
-
-OpenCode V1 does not auto-discover `.opencode/plugins/`, so add the plugin explicitly:
-
-```jsonc
-{ "plugin": ["/absolute/path/to/i-have-adhd/.opencode/plugins/i-have-adhd.mjs"] }
-```
-
-**For a global install, expose the vendored checkout with a one-line loader**, because
-the checkout is not a discovered project:
+For use across projects:
 
 ```bash
 git clone https://github.com/ayghri/i-have-adhd ~/.config/opencode/vendor/i-have-adhd
 mkdir -p ~/.config/opencode/plugins
 cat > ~/.config/opencode/plugins/i-have-adhd.js <<'EOF'
-export { default } from "file://$HOME/.config/opencode/vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs";
+export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs';
 EOF
 ```
 
-The loader re-exports the vendored module so its `__dirname` — and therefore its
-`../../skills` and `../command/i-have-adhd.md` lookups — stay inside the checkout.
-Replace `file://$HOME/...` with an absolute `file:///` URL.
+The relative import works as written; no path substitution is needed. V1 and V2 automatically discover `.js` plugins. From a checkout, start OpenCode in the repository directory: `.opencode/plugins/i-have-adhd.js` loads the plugin without `opencode.json`.
 
-A `plugins` config entry is not usable for either case on 2.0.18: a file path is
-rejected with `configured plugin path must be a directory`, and a directory path is
-accepted but never loaded. Auto-discovery is the supported route.
+Existing V1 installations that reference the `.mjs` file through `plugin` in `opencode.json` still work on 1.18.29+. Use either that entry or the loader above, not both, to avoid duplicate loading.
 
-## Verify
+Start a new session and type `/i-have-adhd`. The rules apply until you say `stop adhd mode` or `normal mode`.
+
+#### Skill and command only (without always-on)
+
+Alternatively, from a checkout, copy the skill and command into OpenCode's global directories:
+
+```bash
+mkdir -p ~/.config/opencode/skills/i-have-adhd ~/.config/opencode/commands
+cp skills/i-have-adhd/SKILL.md ~/.config/opencode/skills/i-have-adhd/SKILL.md
+cp .opencode/command/i-have-adhd.md ~/.config/opencode/commands/i-have-adhd.md
+```
+
+### Verify
 
 Start OpenCode, type `/`, and confirm `i-have-adhd` appears in the command list.
-From a checkout on V1, `opencode debug config` should show `command["i-have-adhd"]`
-and the checkout's `skills` directory under `skills.paths`.
 
-## Update
+### Update
 
 ```bash
 git -C ~/.config/opencode/vendor/i-have-adhd pull
 ```
 
-If you used the copy-based install, re-copy `SKILL.md` and
-`.opencode/command/i-have-adhd.md` after pulling.
+For the copy-based install, pull your checkout and re-copy the two files.
 
-## Uninstall
+### Uninstall
 
-Remove `~/.config/opencode/plugins/i-have-adhd.js`, and whichever of
-`~/.config/opencode/skills/i-have-adhd/` and
-`~/.config/opencode/commands/i-have-adhd.md` you created.
+Remove `~/.config/opencode/plugins/i-have-adhd.js`. For the copy-based install, remove `~/.config/opencode/skills/i-have-adhd/` and `~/.config/opencode/commands/i-have-adhd.md`. For an existing V1 config-based install, remove its `plugin` entry.
 
-## Always-on (optional)
+### Always-on (optional)
 
-Requires the plugin.
+Requires the plugin. The flag adds the complete ruleset to the system prompt on every turn:
 
 ```bash
 touch ~/.config/opencode/.i-have-adhd-always
 ```
 
-While the flag exists, the plugin appends the full ruleset to the system prompt
-every turn — the OpenCode equivalent of the Claude Code `SessionStart` hook.
-`stop adhd mode` or `normal mode` disables it for the current session; delete the
-flag to turn always-on off for good:
+`stop adhd mode` or `normal mode` asks the agent to return to its normal style for the current session. Delete the flag to stop automatic injection:
 
 ```bash
 rm ~/.config/opencode/.i-have-adhd-always
 ```
 
+If `XDG_CONFIG_HOME` is set, replace `~/.config` in these paths with that directory.
 
+</details>
+
+<details>
 <summary><strong>Pi</strong></summary>
 
 Pi discovers this repository as a native package: `extensions/` provides the session-persistent mode and `skills/` keeps the Agent Skills entry point available.

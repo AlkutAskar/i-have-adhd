@@ -24,6 +24,8 @@
 
 🔗 [Panduan Instalasi](../install/INSTALL.id.md)
 
+Plugin OpenCode mendukung V1 1.18.29 atau lebih baru dan V2.
+
 ## Apa Fungsinya Sii?
 
 Sebuah skill untuk asisten coding-mu yang mencegahnya mengubur jawaban di tengah teks. Aksi di awal. Langkah bernomor. Tanpa basa-basi seperti "Semoga membantu!"

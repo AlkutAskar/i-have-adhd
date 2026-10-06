@@ -31,6 +31,8 @@ Install the i-have-adhd skill/plugin from https://github.com/ayghri/i-have-adhd,
 
 または、🔗 [インストール手順を確認する](../install/INSTALL.ja.md)。
 
+OpenCode プラグインは V1 1.18.29以降と V2 に対応しています。
+
 ## 機能
 
 コーディングアシスタントの回答を長文で埋めさせないようにするスキル。最優先は行動で、手順を箇条書きで整理。  「お役に立てれば幸いです！」などの不要な挨拶や定型文をカットします。

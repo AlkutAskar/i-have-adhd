@@ -1,20 +1,5 @@
-// Test driver for the OpenCode plugin. Imports the plugin at argv[2], calls the
-// API named by argv[3], and prints a JSON summary so tests can assert on it:
-//
-//   skill     V2: runs `setup(ctx)` and prints the registered skills.
-//   command   V2: runs `setup(ctx)` and prints the registered commands, with
-//              `template` holding the prompt the command would submit.
-//   context   V2: runs `setup(ctx)`, fires the `context` session hook against an
-//              empty system prompt, and prints the resulting system text.
-//   v1-config   V1: calls `server()` and prints the config after its `config`
-//              hook runs twice, checking registration, overrides, and idempotency.
-//   v1-context  V1: calls `server()` and fires
-//              `experimental.chat.system.transform` against an empty system
-//              prompt, printing the resulting system text.
-//
-// One default export serves both APIs: V2 calls `setup(ctx)`, V1 calls
-// `server()`. A `context` or `v1-context` run prints nothing when the hook
-// injects nothing (always-on flag absent).
+// Usage: node driver.mjs <plugin> <skill|command|context|v1-config|v1-context> [config]
+// Print registrations as JSON, or the injected system text for context modes.
 import { pathToFileURL } from 'node:url';
 
 const pluginPath = process.argv[2];
@@ -27,7 +12,6 @@ const hooks = new Map();
 const prompts = [];
 
 const editorFor = (store) => ({
-  list: () => [...store.values()],
   get: (id) => store.get(id),
   add: (entry) => store.set(entry.id ?? entry.name, entry),
 });

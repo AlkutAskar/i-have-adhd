@@ -26,6 +26,8 @@
 
 🔗 [Hướng dẫn cài đặt](../install/INSTALL.vi.md)
 
+Plugin OpenCode hỗ trợ V1 từ 1.18.29 và V2.
+
 ## Skill này làm gì
 
 Một skill dành cho trợ lý lập trình, giúp câu trả lời đi thẳng vào trọng tâm thay vì bị chôn vùi trong những đoạn văn dài. Hành động trước. Đánh số các bước. Không có câu “Hy vọng điều này hữu ích!”

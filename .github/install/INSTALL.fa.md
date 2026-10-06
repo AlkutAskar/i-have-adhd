@@ -424,35 +424,39 @@ Exceptions: explain fully when asked to explain. Confirm before destructive acti
 <details>
 <summary><strong>OpenCode</strong></summary>
 
-OpenCode این ریپازیتوری را به عنوان یک پلاگین سرور بارگذاری می‌کند: فایل `.opencode/plugins/i-have-adhd.mjs` نقطه ورود `skills/` و دستور `/i-have-adhd` را ثبت می‌کند و زمانی که حالت همیشه فعال باشد، مجموعه قوانین را تزریق می‌کند. OpenCode همچنین به صورت بومی `skills/` را می‌خواند، بنابراین مهارت حتی بدون پلاگین هم کار می‌کند — پلاگین فقط دستور `/i-have-adhd` و پرچم همیشه فعال را اضافه می‌کند.
+پلاگین از OpenCode V1 **نسخه 1.18.29 و جدیدتر** و V2 پشتیبانی می‌کند. مهارت و دستور `/i-have-adhd` را ثبت می‌کند و حالت همیشه فعال را به‌صورت اختیاری ارائه می‌دهد. نسخه‌های قدیمی‌تر V1 باید ارتقا یابند یا از پلاگین نسخه قبلی مهارت استفاده کنند.
 
 ### نصب
 
-ریپازیتوری را کلون کرده و OpenCode را به پلاگین ارجاع دهید. استفاده از مسیر مطلق، یک نسخه را در تمام پروژه‌ها به اشتراک می‌گذارد:
+برای استفاده در همه پروژه‌ها:
 
 ```bash
 git clone https://github.com/ayghri/i-have-adhd ~/.config/opencode/vendor/i-have-adhd
+mkdir -p ~/.config/opencode/plugins
+cat > ~/.config/opencode/plugins/i-have-adhd.js <<'EOF'
+export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs';
+EOF
 ```
 
-به فایل `opencode.json` خود اضافه کنید (سراسری: `~/.config/opencode/opencode.json`):
+مسیر نسبی همان‌طور که نوشته شده کار می‌کند و نیازی به جایگزینی مسیر نیست. V1 و V2 پلاگین‌های `.js` را خودکار پیدا می‌کنند. OpenCode را از پوشه ریپازیتوری اجرا کنید؛ `.opencode/plugins/i-have-adhd.js` پلاگین را بدون `opencode.json` بارگذاری می‌کند.
 
-```json
-{ "plugin": ["/absolute/path/to/i-have-adhd/.opencode/plugins/i-have-adhd.mjs"] }
+نصب‌های فعلی V1 که از طریق `plugin` در `opencode.json` به فایل `.mjs` اشاره می‌کنند، در نسخه 1.18.29 و جدیدتر همچنان کار می‌کنند. برای جلوگیری از بارگذاری تکراری، فقط از آن تنظیم یا فایل بارگذار بالا استفاده کنید.
+
+یک نشست جدید شروع کنید و `/i-have-adhd` را وارد کنید. قوانین تا زمانی که `stop adhd mode` یا `normal mode` را بگویید فعال می‌مانند.
+
+#### فقط مهارت و دستور (بدون حالت همیشه فعال)
+
+روش دیگر این است که مهارت و دستور را از ریپازیتوری به پوشه‌های سراسری OpenCode کپی کنید:
+
+```bash
+mkdir -p ~/.config/opencode/skills/i-have-adhd ~/.config/opencode/commands
+cp skills/i-have-adhd/SKILL.md ~/.config/opencode/skills/i-have-adhd/SKILL.md
+cp .opencode/command/i-have-adhd.md ~/.config/opencode/commands/i-have-adhd.md
 ```
-
-یا OpenCode را از داخل پوشه کلون‌شده اجرا کنید — این ریپازیتوری شامل یک فایل `opencode.json` در ریشه است که پلاگین در آن سیم‌کشی شده است.
-
-یک نشست جدید شروع کنید و خروجی دوستدار ADHD را برای آن نشست فعال کنید:
-
-```text
-/i-have-adhd
-```
-
-قوانین تا زمانی که `stop adhd mode` یا `normal mode` را تایپ نکنید، فعال می‌مانند.
 
 ### بررسی صحت نصب
 
-OpenCode را شروع کنید، `/` را تایپ کنید و تأیید کنید که `i-have-adhd` در لیست دستورات ظاهر می‌شود.
+OpenCode را اجرا کنید، `/` را وارد کنید و مطمئن شوید `i-have-adhd` در فهرست دستورات دیده می‌شود.
 
 ### به‌روزرسانی
 
@@ -460,21 +464,27 @@ OpenCode را شروع کنید، `/` را تایپ کنید و تأیید کن�
 git -C ~/.config/opencode/vendor/i-have-adhd pull
 ```
 
+در روش نصب با کپی، ریپازیتوری را به‌روزرسانی کرده و هر دو فایل را دوباره کپی کنید.
+
 ### حذف نصب
 
-ورودی `plugin` را از `opencode.json` حذف کنید.
+فایل `~/.config/opencode/plugins/i-have-adhd.js` را حذف کنید. در روش نصب با کپی، `~/.config/opencode/skills/i-have-adhd/` و `~/.config/opencode/commands/i-have-adhd.md` را حذف کنید. برای نصب فعلی V1 با تنظیمات، ورودی `plugin` مربوط را حذف کنید.
 
 ### همیشه فعال (اختیاری)
+
+به پلاگین نیاز دارد. ساختن فایل پرچم، تمام قوانین را در هر نوبت به پرامپت سیستم اضافه می‌کند:
 
 ```bash
 touch ~/.config/opencode/.i-have-adhd-always
 ```
 
-تا زمانی که این پرچم وجود دارد، پلاگین مجموعه قوانین کامل را در هر نوبت به پرامپت سیستم اضافه می‌کند — معادل هوک `SessionStart` در Claude Code برای OpenCode. دستور `stop adhd mode` یا `normal mode` آن را برای نشست جاری غیرفعال می‌کند؛ برای خاموش کردن دائمی حالت همیشه فعال، پرچم را حذف کنید:
+دستور `stop adhd mode` یا `normal mode` از عامل می‌خواهد در نشست جاری به سبک پاسخ معمول برگردد. برای توقف تزریق خودکار، فایل پرچم را حذف کنید:
 
 ```bash
 rm ~/.config/opencode/.i-have-adhd-always
 ```
+
+اگر `XDG_CONFIG_HOME` تنظیم شده است، در این مسیرها `~/.config` را با آن پوشه جایگزین کنید.
 
 </details>
 
