@@ -11,12 +11,14 @@
 <p align="center">
   <a href="../../README.md" title="English" aria-label="English">🇬🇧</a> ·
   <strong title="简体中文" aria-label="简体中文">🇨🇳</strong> ·
+  <a href="README.id.md" title="Bahasa Indonesia" aria-label="Bahasa Indonesia">🇮🇩</a> ·
   <a href="README.pt-BR.md" title="Português (Brasil)" aria-label="Português (Brasil)">🇧🇷</a> ·
   <a href="README.ja.md" title="日本語" aria-label="日本語">🇯🇵</a> ·
   <a href="README.vi.md" title="Tiếng Việt" aria-label="Tiếng Việt">🇻🇳</a> ·
   <a href="README.ko.md" title="한국어" aria-label="한국어">🇰🇷</a> ·
   <a href="README.fa.md" title="فارسی" aria-label="فارسی">🇮🇷</a> ·
-  <a href="README.th.md" title="ภาษาไทย" aria-label="ภาษาไทย">🇹🇭</a>
+  <a href="README.th.md" title="ภาษาไทย" aria-label="ภาษาไทย">🇹🇭</a> ·
+  <a href="README.ar.md" title="العربية" aria-label="العربية">🇸🇦</a>
 </p>
 
 
@@ -99,6 +101,6 @@ claude plugin install i-have-adhd@i-have-adhd
 
 ## 许可证
 
-MIT。
+[MIT](../../LICENSE)。
 
 如果它帮你省下一次滚动、少看一句“问得好！”，请点个 Star ⭐
