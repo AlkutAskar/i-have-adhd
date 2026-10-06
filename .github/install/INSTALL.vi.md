@@ -399,9 +399,9 @@ export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs
 EOF
 ```
 
-Đường dẫn tương đối hoạt động ngay, không cần thay đường dẫn. V1 và V2 đều tự phát hiện plugin `.js`. Khởi động OpenCode trong thư mục kho mã: `.opencode/plugins/i-have-adhd.js` tải plugin mà không cần `opencode.json`.
+Để dùng bản sao kho mã, khởi động OpenCode trong thư mục đó. V1 và V2 đều tự động tải `.opencode/plugins/i-have-adhd.js`.
 
-Các cài đặt V1 hiện có trỏ đến tệp `.mjs` qua `plugin` trong `opencode.json` vẫn hoạt động từ phiên bản 1.18.29. Chỉ dùng cấu hình đó hoặc tệp nạp ở trên để tránh tải hai lần.
+Với cài đặt V1 hiện có, giữ mục `plugin` trong `opencode.json`. Nếu chuyển sang tệp nạp ở trên, hãy xóa mục đó.
 
 Mở phiên mới và nhập `/i-have-adhd`. Các quy tắc duy trì đến khi bạn nói `stop adhd mode` hoặc `normal mode`.
 

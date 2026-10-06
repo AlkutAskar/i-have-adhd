@@ -398,9 +398,9 @@ export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs
 EOF
 ```
 
-相対インポートはそのまま使えます。パスの置き換えは不要です。V1 と V2 は `.js` プラグインを自動検出します。チェックアウト先で OpenCode を起動すれば、`.opencode/plugins/i-have-adhd.js` が読み込まれるため、`opencode.json` は不要です。
+チェックアウトを使用する場合は、リポジトリのディレクトリで OpenCode を起動します。V1 と V2 は `.opencode/plugins/i-have-adhd.js` を自動で読み込みます。
 
-既存の V1 設定で `opencode.json` の `plugin` から `.mjs` ファイルを指定している場合も、1.18.29以降では動作します。二重読み込みを避けるため、その設定か上記のローダーのどちらか一方を使用してください。
+既存の V1 インストールでは、`opencode.json` の `plugin` エントリーを保持してください。上記のローダーに切り替える場合は、そのエントリーを削除してください。
 
 新しいセッションで `/i-have-adhd` と入力します。`stop adhd mode` または `normal mode` と入力するまでルールが維持されます。
 

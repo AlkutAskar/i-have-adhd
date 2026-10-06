@@ -452,9 +452,9 @@ export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs
 EOF
 ```
 
-相对导入可以直接使用，无需替换路径。V1 和 V2 都会自动发现 `.js` 插件。在检出目录中启动 OpenCode 即可加载 `.opencode/plugins/i-have-adhd.js`，无需 `opencode.json`。
+要使用检出的仓库，请在仓库目录中启动 OpenCode。V1 和 V2 都会自动加载 `.opencode/plugins/i-have-adhd.js`。
 
-现有 V1 安装通过 `opencode.json` 的 `plugin` 引用 `.mjs` 文件的方式，在1.18.29及以上版本中仍然有效。请使用该配置或上述加载文件中的一种，避免重复加载。
+现有 V1 安装请保留 `opencode.json` 中的 `plugin` 条目。如果改用上述加载文件，请删除该条目。
 
 开启新会话并输入 `/i-have-adhd`。规则持续生效，直到输入 `stop adhd mode` 或 `normal mode`。
 

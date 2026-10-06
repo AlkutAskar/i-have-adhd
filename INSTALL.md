@@ -522,9 +522,9 @@ export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs
 EOF
 ```
 
-The relative import works as written; no path substitution is needed. V1 and V2 automatically discover `.js` plugins. From a checkout, start OpenCode in the repository directory: `.opencode/plugins/i-have-adhd.js` loads the plugin without `opencode.json`.
+To use a checkout, start OpenCode in the repository directory. Both V1 and V2 load `.opencode/plugins/i-have-adhd.js` automatically.
 
-Existing V1 installations that reference the `.mjs` file through `plugin` in `opencode.json` still work on 1.18.29+. Use either that entry or the loader above, not both, to avoid duplicate loading.
+For an existing V1 installation, keep the `plugin` entry in `opencode.json`. If switching to the loader above, remove that entry.
 
 Start a new session and type `/i-have-adhd`. The rules apply until you say `stop adhd mode` or `normal mode`.
 

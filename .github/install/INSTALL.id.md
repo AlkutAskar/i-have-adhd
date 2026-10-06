@@ -397,9 +397,9 @@ export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs
 EOF
 ```
 
-Impor relatif ini langsung berfungsi; tidak perlu mengganti jalur. V1 dan V2 otomatis menemukan plugin `.js`. Jalankan OpenCode dari direktori repositori: `.opencode/plugins/i-have-adhd.js` memuat plugin tanpa `opencode.json`.
+Untuk menggunakan salinan repositori, jalankan OpenCode dari direktori tersebut. V1 dan V2 memuat `.opencode/plugins/i-have-adhd.js` secara otomatis.
 
-Instalasi V1 yang sudah merujuk file `.mjs` melalui `plugin` di `opencode.json` tetap berfungsi pada 1.18.29 atau lebih baru. Gunakan entri tersebut atau pemuat di atas, jangan keduanya, agar plugin tidak dimuat dua kali.
+Untuk instalasi V1 yang sudah ada, pertahankan entri `plugin` di `opencode.json`. Jika beralih ke pemuat di atas, hapus entri tersebut.
 
 Mulai sesi baru dan ketik `/i-have-adhd`. Aturan berlaku hingga Anda mengatakan `stop adhd mode` atau `normal mode`.
 

@@ -518,9 +518,9 @@ export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs
 EOF
 ```
 
-يعمل الاستيراد النسبي كما هو، دون استبدال المسارات. يكتشف V1 وV2 مكوّنات `.js` الإضافية تلقائيًا. شغّل OpenCode من مجلد المستودع؛ يحمّل `.opencode/plugins/i-have-adhd.js` المكوّن الإضافي دون الحاجة إلى `opencode.json`.
+لاستخدام نسخة المستودع، شغّل OpenCode من مجلدها. يحمّل V1 وV2 الملف `.opencode/plugins/i-have-adhd.js` تلقائيًا.
 
-تظل إعدادات V1 الحالية التي تشير إلى ملف `.mjs` عبر `plugin` في `opencode.json` تعمل على 1.18.29 وما بعده. استخدم ذلك الإعداد أو ملف التحميل أعلاه، وليس كليهما، لتجنب التحميل المكرر.
+للتثبيت الحالي على V1، احتفظ بإدخال `plugin` في `opencode.json`. إذا انتقلت إلى ملف التحميل أعلاه، فاحذف ذلك الإدخال.
 
 ابدأ جلسة جديدة واكتب `/i-have-adhd`. تظل القواعد سارية حتى تقول `stop adhd mode` أو `normal mode`.
 

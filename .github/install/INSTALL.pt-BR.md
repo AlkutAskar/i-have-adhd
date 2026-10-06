@@ -399,9 +399,9 @@ export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs
 EOF
 ```
 
-A importação relativa funciona como está; não é preciso substituir caminhos. V1 e V2 descobrem plugins `.js` automaticamente. Inicie o OpenCode dentro do repositório: `.opencode/plugins/i-have-adhd.js` carrega o plugin sem `opencode.json`.
+Para usar uma cópia do repositório, inicie o OpenCode nesse diretório. V1 e V2 carregam `.opencode/plugins/i-have-adhd.js` automaticamente.
 
-Instalações V1 que apontam para o arquivo `.mjs` por meio de `plugin` em `opencode.json` continuam funcionando na versão 1.18.29 ou superior. Use essa configuração ou o carregador acima, não ambos, para evitar carregamento duplicado.
+Para uma instalação V1 existente, mantenha a entrada `plugin` em `opencode.json`. Se mudar para o carregador acima, remova essa entrada.
 
 Inicie uma nova sessão e digite `/i-have-adhd`. As regras permanecem até você dizer `stop adhd mode` ou `normal mode`.
 
