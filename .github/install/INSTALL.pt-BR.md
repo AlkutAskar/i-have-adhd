@@ -383,6 +383,71 @@ Em uma sessão do Kimi Code, execute `/plugins`, posicione o cursor em **I Have 
 
 
 <details>
+<summary><strong>OpenCode</strong></summary>
+
+O plugin suporta OpenCode V1 **1.18.29 ou superior** e V2. Registra a skill e o comando `/i-have-adhd` e oferece o modo sempre ativo opcional. Versões anteriores do V1 precisam ser atualizadas ou usar o plugin da versão anterior da skill.
+
+### Instalação
+
+Para usar em todos os projetos:
+
+```bash
+git clone https://github.com/ayghri/i-have-adhd ~/.config/opencode/vendor/i-have-adhd
+mkdir -p ~/.config/opencode/plugins
+cat > ~/.config/opencode/plugins/i-have-adhd.js <<'EOF'
+export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs';
+EOF
+```
+
+Para uma instalação V1 existente, mantenha a entrada `plugin` em `opencode.json`. Se mudar para o carregador acima, remova essa entrada.
+
+Inicie uma nova sessão e digite `/i-have-adhd`. As regras permanecem até você dizer `stop adhd mode` ou `normal mode`.
+
+#### Apenas skill e comando (sem modo sempre ativo)
+
+Como alternativa, copie a skill e o comando do repositório para os diretórios globais do OpenCode:
+
+```bash
+mkdir -p ~/.config/opencode/skills/i-have-adhd ~/.config/opencode/commands
+cp skills/i-have-adhd/SKILL.md ~/.config/opencode/skills/i-have-adhd/SKILL.md
+cp .opencode/command/i-have-adhd.md ~/.config/opencode/commands/i-have-adhd.md
+```
+
+### Verificação
+
+Inicie o OpenCode, digite `/` e confirme que `i-have-adhd` aparece na lista de comandos.
+
+### Atualização
+
+```bash
+git -C ~/.config/opencode/vendor/i-have-adhd pull
+```
+
+Na instalação por cópia, atualize o repositório e copie novamente os dois arquivos.
+
+### Desinstalação
+
+Remova `~/.config/opencode/plugins/i-have-adhd.js`. Na instalação por cópia, remova `~/.config/opencode/skills/i-have-adhd/` e `~/.config/opencode/commands/i-have-adhd.md`. Para uma instalação V1 já configurada, remova a entrada `plugin` correspondente.
+
+### Sempre ativo (opcional)
+
+Requer o plugin. Criar o arquivo de sinalização adiciona todas as regras ao prompt do sistema em cada turno:
+
+```bash
+touch ~/.config/opencode/.i-have-adhd-always
+```
+
+`stop adhd mode` ou `normal mode` pede ao agente que volte ao estilo padrão na sessão atual. Remova o arquivo para interromper a inclusão automática:
+
+```bash
+rm ~/.config/opencode/.i-have-adhd-always
+```
+
+Se `XDG_CONFIG_HOME` estiver definido, substitua `~/.config` nesses caminhos por esse diretório.
+
+</details>
+
+<details>
 <summary><strong>Pi</strong></summary>
 
 O Pi implementa o padrão Agent Skills, portanto o mesmo `SKILL.md` é carregado diretamente, sem conversão. A invocação no Pi é diferente: as skills são chamadas como `/skill:<name>`.
@@ -561,7 +626,7 @@ Exceções: explique por completo quando pedirem. Confirme antes de ações dest
 </details>
 
 <details>
-<summary><strong>Cursor, OpenCode, Amp e qualquer outro ambiente compatível com agent-skills</strong></summary>
+<summary><strong>Cursor, Amp e qualquer outro ambiente compatível com agent-skills</strong></summary>
 
 Funciona com qualquer ambiente que leia Agent Skills. Troque `-a <agent>` pelo seu.
 

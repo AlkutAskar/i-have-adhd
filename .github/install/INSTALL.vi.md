@@ -383,6 +383,71 @@ Trong phiên Kimi Code, chạy `/plugins`, đưa con trỏ đến **I Have ADHD*
 
 
 <details>
+<summary><strong>OpenCode</strong></summary>
+
+Plugin hỗ trợ OpenCode V1 **từ 1.18.29** và V2. Plugin đăng ký skill, lệnh `/i-have-adhd` và chế độ luôn bật tùy chọn. V1 cũ hơn cần nâng cấp hoặc dùng plugin từ bản phát hành skill trước đó.
+
+### Cài đặt
+
+Để dùng trong mọi dự án:
+
+```bash
+git clone https://github.com/ayghri/i-have-adhd ~/.config/opencode/vendor/i-have-adhd
+mkdir -p ~/.config/opencode/plugins
+cat > ~/.config/opencode/plugins/i-have-adhd.js <<'EOF'
+export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs';
+EOF
+```
+
+Với cài đặt V1 hiện có, giữ mục `plugin` trong `opencode.json`. Nếu chuyển sang tệp nạp ở trên, hãy xóa mục đó.
+
+Mở phiên mới và nhập `/i-have-adhd`. Các quy tắc duy trì đến khi bạn nói `stop adhd mode` hoặc `normal mode`.
+
+#### Chỉ skill và lệnh (không có chế độ luôn bật)
+
+Hoặc sao chép skill và lệnh từ kho mã vào các thư mục toàn cục của OpenCode:
+
+```bash
+mkdir -p ~/.config/opencode/skills/i-have-adhd ~/.config/opencode/commands
+cp skills/i-have-adhd/SKILL.md ~/.config/opencode/skills/i-have-adhd/SKILL.md
+cp .opencode/command/i-have-adhd.md ~/.config/opencode/commands/i-have-adhd.md
+```
+
+### Kiểm tra
+
+Khởi động OpenCode, nhập `/` và xác nhận `i-have-adhd` có trong danh sách lệnh.
+
+### Cập nhật
+
+```bash
+git -C ~/.config/opencode/vendor/i-have-adhd pull
+```
+
+Với cách cài bằng sao chép, cập nhật kho mã rồi sao chép lại hai tệp.
+
+### Gỡ cài đặt
+
+Xóa `~/.config/opencode/plugins/i-have-adhd.js`. Với cách cài bằng sao chép, xóa `~/.config/opencode/skills/i-have-adhd/` và `~/.config/opencode/commands/i-have-adhd.md`. Với cài đặt V1 dùng cấu hình hiện có, xóa mục `plugin` tương ứng.
+
+### Luôn bật (không bắt buộc)
+
+Cần plugin. Khi tạo tệp cờ, toàn bộ quy tắc được thêm vào lời nhắc hệ thống ở mỗi lượt:
+
+```bash
+touch ~/.config/opencode/.i-have-adhd-always
+```
+
+`stop adhd mode` hoặc `normal mode` yêu cầu agent trở lại cách trả lời mặc định trong phiên hiện tại. Xóa tệp cờ để ngừng tự động thêm quy tắc:
+
+```bash
+rm ~/.config/opencode/.i-have-adhd-always
+```
+
+Nếu có đặt `XDG_CONFIG_HOME`, thay `~/.config` trong các đường dẫn này bằng thư mục đó.
+
+</details>
+
+<details>
 <summary><strong>Pi</strong></summary>
 
 Pi triển khai chuẩn Agent Skills nên tải trực tiếp cùng một `SKILL.md`, không cần chuyển đổi. Cách gọi của Pi khác các công cụ khác: skill được gọi bằng `/skill:<name>`.
@@ -561,7 +626,7 @@ Ngoại lệ: giải thích đầy đủ khi được yêu cầu. Xác nhận tr
 </details>
 
 <details>
-<summary><strong>Cursor, OpenCode, Amp và mọi môi trường agent-skills khác</strong></summary>
+<summary><strong>Cursor, Amp và mọi môi trường agent-skills khác</strong></summary>
 
 Hoạt động với mọi môi trường đọc Agent Skills. Thay `-a <agent>` bằng agent của bạn.
 
