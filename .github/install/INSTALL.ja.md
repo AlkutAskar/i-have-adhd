@@ -398,8 +398,6 @@ export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs
 EOF
 ```
 
-チェックアウトを使用する場合は、リポジトリのディレクトリで OpenCode を起動します。V1 と V2 は `.opencode/plugins/i-have-adhd.js` を自動で読み込みます。
-
 既存の V1 インストールでは、`opencode.json` の `plugin` エントリーを保持してください。上記のローダーに切り替える場合は、そのエントリーを削除してください。
 
 新しいセッションで `/i-have-adhd` と入力します。`stop adhd mode` または `normal mode` と入力するまでルールが維持されます。

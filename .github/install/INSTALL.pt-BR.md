@@ -399,8 +399,6 @@ export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs
 EOF
 ```
 
-Para usar uma cópia do repositório, inicie o OpenCode nesse diretório. V1 e V2 carregam `.opencode/plugins/i-have-adhd.js` automaticamente.
-
 Para uma instalação V1 existente, mantenha a entrada `plugin` em `opencode.json`. Se mudar para o carregador acima, remova essa entrada.
 
 Inicie uma nova sessão e digite `/i-have-adhd`. As regras permanecem até você dizer `stop adhd mode` ou `normal mode`.

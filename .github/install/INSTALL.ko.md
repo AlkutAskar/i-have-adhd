@@ -399,8 +399,6 @@ export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs
 EOF
 ```
 
-저장소를 사용하려면 해당 디렉터리에서 OpenCode를 시작하세요. V1과 V2 모두 `.opencode/plugins/i-have-adhd.js`를 자동으로 로드합니다.
-
 기존 V1 설치에서는 `opencode.json`의 `plugin` 항목을 유지하세요. 위 로더로 전환한다면 해당 항목을 제거하세요.
 
 새 세션에서 `/i-have-adhd`를 입력하세요. `stop adhd mode` 또는 `normal mode`를 입력할 때까지 규칙이 유지됩니다.

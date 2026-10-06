@@ -32,8 +32,6 @@ Install the i-have-adhd skill/plugin from https://github.com/ayghri/i-have-adhd,
 
 或 🔗 [查看安装说明](../install/INSTALL.zh-CN.md)
 
-OpenCode 插件支持 V1 1.18.29及以上和 V2。
-
 ## 功能
 
 一个给编程助手用的技能，让它别把答案埋进长篇大论。行动优先。步骤编号。不说“希望这能帮到你！”

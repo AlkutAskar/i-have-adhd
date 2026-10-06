@@ -31,8 +31,6 @@ Install the i-have-adhd skill/plugin from https://github.com/ayghri/i-have-adhd,
 
 O 🔗 [consulta las instrucciones de instalación](../../INSTALL.md).
 
-El plugin de OpenCode admite V1 1.18.29 o posterior y V2.
-
 ## Qué hace
 
 Una *skill* para tu asistente de código que evita que entierre la respuesta. Acción primero. Pasos numerados. Nada de "¡Espero que esto ayude!".

@@ -399,8 +399,6 @@ export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs
 EOF
 ```
 
-Để dùng bản sao kho mã, khởi động OpenCode trong thư mục đó. V1 và V2 đều tự động tải `.opencode/plugins/i-have-adhd.js`.
-
 Với cài đặt V1 hiện có, giữ mục `plugin` trong `opencode.json`. Nếu chuyển sang tệp nạp ở trên, hãy xóa mục đó.
 
 Mở phiên mới và nhập `/i-have-adhd`. Các quy tắc duy trì đến khi bạn nói `stop adhd mode` hoặc `normal mode`.

@@ -31,8 +31,6 @@ Install the i-have-adhd skill/plugin from https://github.com/ayghri/i-have-adhd,
 
 🔗 [مشاهده راهنمای نصب](../install/INSTALL.fa.md)
 
-پلاگین OpenCode از V1 نسخه 1.18.29 و جدیدتر و V2 پشتیبانی می‌کند.
-
 
 ## این مهارت چه کار می‌کند؟
 

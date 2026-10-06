@@ -518,8 +518,6 @@ export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs
 EOF
 ```
 
-لاستخدام نسخة المستودع، شغّل OpenCode من مجلدها. يحمّل V1 وV2 الملف `.opencode/plugins/i-have-adhd.js` تلقائيًا.
-
 للتثبيت الحالي على V1، احتفظ بإدخال `plugin` في `opencode.json`. إذا انتقلت إلى ملف التحميل أعلاه، فاحذف ذلك الإدخال.
 
 ابدأ جلسة جديدة واكتب `/i-have-adhd`. تظل القواعد سارية حتى تقول `stop adhd mode` أو `normal mode`.

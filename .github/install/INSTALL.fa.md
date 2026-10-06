@@ -438,8 +438,6 @@ export { default } from '../vendor/i-have-adhd/.opencode/plugins/i-have-adhd.mjs
 EOF
 ```
 
-برای استفاده از نسخه محلی ریپازیتوری، OpenCode را از پوشه آن اجرا کنید. V1 و V2 فایل `.opencode/plugins/i-have-adhd.js` را خودکار بارگذاری می‌کنند.
-
 برای نصب فعلی V1، ورودی `plugin` را در `opencode.json` نگه دارید. اگر به فایل بارگذار بالا تغییر می‌دهید، آن ورودی را حذف کنید.
 
 یک نشست جدید شروع کنید و `/i-have-adhd` را وارد کنید. قوانین تا زمانی که `stop adhd mode` یا `normal mode` را بگویید فعال می‌مانند.
